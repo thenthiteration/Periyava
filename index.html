@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periyava Pathuppa - Decision Maker</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Google Font (Inter) --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: url('https://lh3.googleusercontent.com/pw/AP1GczOX8DsseFFGdyd50nUAzdmec-2CNEBhotlJzTMSzPSRbtDhdOAl1adaNIzL5FN1CBFGJ2H7aEtXQg9vLCbwEr5AePKfraX6UGOHlcRNOlJ27yFOlLCYjcN1pt84gjlOi1BZTW3eq9-XmX5ATOqLQf6T=w2138-h1530-s-no-gm?authuser=0');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            background-size: contain; /* Use 'contain' to ensure the full image is visible */
+        }
+        /* Style for the highlighted choice during the "thinking" animation */
+        .choice-item.highlight {
+            background-color: #FDE68A; /* A respectful yellow/saffron color */
+            border-color: #F59E0B;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-yellow-50 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Main App Card --><div class="bg-white/60 backdrop-blur-sm w-full max-w-md p-6 md:p-8 rounded-2xl shadow-xl">
+        
+        <!-- Initial Image of Maha Periyava (Hero Image) -->
+        <!-- REPLACE THE 'src' BELOW WITH YOUR DIRECT IMAGE URL -->
+        <div id="initial-image-container" class="mb-6">
+            <img src="https://lh3.googleusercontent.com/pw/AP1GczOO2b2IsvGJcBcL94dz2SFUfIk3urlEb_nZ1UXDiS3L8XQkCs8nUcEJoqdhWH4XhTkAPzM72y3Fg_71GNoQV5AV2_kAWFuTnfelwgV5CAGtBH0FkfhMoDcCPr2kyMc9Yre8nXoNYd6L5AkyRpfft73u=w2226-h1530-s-no-gm?authuser=0" 
+                 alt="Maha Periyava" 
+                 class="w-full h-auto object-cover rounded-xl mx-auto shadow-lg border-4 border-yellow-200">
+        </div>
+
+        <!-- Header --><div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-orange-800">Periyava Pathuppa</h1>
+            <p class="text-gray-600 mt-1">Submit your choices for guidance.</p>
+        </div>
+
+        <!-- Input Section --><div id="input-section">
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="choice-input" 
+                       placeholder="Enter a choice..." 
+                       class="flex-grow w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                <button id="add-choice-btn" 
+                        class="px-5 py-2 bg-orange-600 text-white font-semibold rounded-lg shadow-md hover:bg-orange-700 transition-colors duration-200">
+                    Add
+                </button>
+            </div>
+        </div>
+
+        <!-- Choices List --><div id="choices-container" class="mb-6">
+            <div id="choices-list" class="space-y-2 max-h-48 overflow-y-auto pr-2">
+                <!-- Choices will be added here by JavaScript --></div>
+        </div>
+        
+        <!-- Action Button --><button id="ask-btn" 
+                disabled
+                class="w-full py-3 bg-green-700 text-white text-lg font-bold rounded-lg shadow-lg hover:bg-green-800 transition-all duration-200 disabled:bg-gray-400 disabled:shadow-none disabled:cursor-not-allowed">
+            Ask Periyava
+        </button>
+
+        <!-- Result Section (hidden by default) --><div id="result-section" class="hidden text-center mt-6">
+            <!-- Blessing Image of Maha Periyava - REPLACE SRC WITH YOUR IMAGE URL -->
+            <!-- REPLACE THE 'src' BELOW WITH YOUR DIRECT IMAGE URL -->
+            <img src="https://lh3.googleusercontent.com/pw/AP1GczOO2b2IsvGJcBcL94dz2SFUfIk3urlEb_nZ1UXDiS3L8XQkCs8nUcEJoqdhWH4XhTkAPzM72y3Fg_71GNoQV5AV2_kAWFuTnfelwgV5CAGtBH0FkfhMoDcCPr2kyMc9Yre8nXoNYd6L5AkyRpfft73u=w2226-h1530-s-no-gm?authuser=0" 
+                 alt="Maha Periyava's Blessing" 
+                 class="w-full h-auto object-cover rounded-xl mx-auto shadow-lg border-4 border-green-200">
+            
+            <h2 class="text-2xl font-semibold text-green-800 mt-4">Periyava's Guidance:</h2>
+            <div id="result-text" 
+                 class="text-2xl font-bold text-gray-900 p-4 border-2 border-green-600 rounded-lg bg-green-100 my-4 shadow-inner min-h-[60px] flex items-center justify-center">
+                <!-- Result will be shown here --></div>
+            
+            <!-- Updated Button Group -->
+            <div class="flex justify-center gap-4">
+                <button id="ask-again-btn" 
+                        class="px-5 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 flex items-center">
+                    <i class="fas fa-redo mr-2"></i>
+                    Ask Again
+                </button>
+                <button id="start-over-btn" 
+                        class="px-5 py-2 bg-orange-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-orange-700 transition-colors duration-200 flex items-center">
+                    <i class="fas fa-broom mr-2"></i>
+                    Start Over
+                </button>
+            </div>
+            
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const choiceInput = document.getElementById('choice-input');
+            const addChoiceBtn = document.getElementById('add-choice-btn');
+            const choicesList = document.getElementById('choices-list');
+            const askBtn = document.getElementById('ask-btn');
+            const resultSection = document.getElementById('result-section');
+            const resultText = document.getElementById('result-text');
+            const askAgainBtn = document.getElementById('ask-again-btn');
+            const startOverBtn = document.getElementById('start-over-btn');
+            
+            // Sections to toggle
+            const inputSection = document.getElementById('input-section');
+            const choicesContainer = document.getElementById('choices-container');
+            const initialImageContainer = document.getElementById('initial-image-container');
+
+            // --- State ---
+            let choices = ["Choice 1", "Choice 2"]; // Start with 2 choices
+            let editingIndex = -1; // -1 means no choice is currently being edited
+
+            // --- Functions ---
+            
+            /**
+             * Adds a new choice.
+             */
+            function addChoice() {
+                const choiceText = choiceInput.value.trim();
+                if (choiceText === '') {
+                    return; // Do nothing if input is empty
+                }
+                
+                // Cancel any ongoing edit before adding
+                if (editingIndex !== -1) {
+                    cancelEdit(editingIndex);
+                }
+
+                choices.push(choiceText);
+                choiceInput.value = ''; // Clear input
+                renderChoices();
+                updateAskButtonState();
+                choiceInput.focus();
+            }
+
+            /**
+             * Deletes a choice by its index.
+             */
+            function deleteChoice(index) {
+                // Cancel any ongoing edit before deleting
+                if (editingIndex !== -1) {
+                    cancelEdit(editingIndex);
+                }
+                choices.splice(index, 1);
+                renderChoices();
+                updateAskButtonState();
+            }
+            
+            /**
+             * Switches a choice item to edit mode.
+             */
+            function editChoice(index) {
+                // Cancel any other edit that might be in progress
+                if (editingIndex !== -1) {
+                    cancelEdit(editingIndex);
+                }
+                
+                editingIndex = index;
+                const choiceElement = choicesList.children[index];
+                const textSpan = choiceElement.querySelector('.choice-text');
+                const actionsDiv = choiceElement.querySelector('.actions-div');
+
+                const editInput = document.createElement('input');
+                editInput.type = 'text';
+                editInput.value = choices[index];
+                editInput.className = 'flex-grow w-full px-2 py-1 border border-blue-500 rounded-md mr-2';
+                
+                // Add key listeners for Enter (save) and Escape (cancel)
+                editInput.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveChoice(index);
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        cancelEdit(index);
+                    }
+                };
+                
+                // --- Add onblur event to auto-save ---
+                editInput.onblur = () => saveChoice(index);
+                // --- End of new part ---
+                
+                choiceElement.replaceChild(editInput, textSpan);
+                editInput.focus();
+
+                actionsDiv.querySelector('.edit-btn').classList.add('hidden');
+                actionsDiv.querySelector('.delete-btn').classList.add('hidden');
+                actionsDiv.querySelector('.save-btn').classList.remove('hidden');
+                actionsDiv.querySelector('.cancel-btn').classList.remove('hidden');
+            }
+
+            /**
+             * Saves the edited choice.
+             */
+            function saveChoice(index) {
+                // Check if we are still in editing mode for this specific index.
+                // This prevents race conditions from blur/keydown firing together.
+                if (editingIndex !== index) {
+                    return;
+                }
+                
+                const choiceElement = choicesList.children[index];
+                const editInput = choiceElement.querySelector('input');
+
+                // Check if the input element still exists.
+                // It might have been removed by a racing event.
+                if (!editInput) {
+                    return;
+                }
+
+                const newText = editInput.value.trim();
+
+                if (newText === '') {
+                    // Don't save empty text, just cancel the edit
+                    // We must call cancelEdit which resets editingIndex
+                    cancelEdit(index);
+                    return;
+                }
+
+                choices[index] = newText;
+                editingIndex = -1; // Reset editing state *before* reverting UI
+                revertChoiceUI(index); // Revert UI back to text
+                updateAskButtonState(); // Update button state
+            }
+
+            /**
+             * Cancels the current edit.
+             */
+            function cancelEdit(index) {
+                if (index === -1 || !choicesList.children[index]) return; // Nothing to cancel
+                editingIndex = -1; // Reset editing state
+                revertChoiceUI(index); // Revert UI back to text
+            }
+
+            /**
+             * Helper function to revert a choice item from input to text.
+             */
+            function revertChoiceUI(index) {
+                const choiceElement = choicesList.children[index];
+                // Check if it's currently in edit mode (has an input)
+                const editInput = choiceElement.querySelector('input');
+                if (!editInput) return; // Already reverted
+
+                const actionsDiv = choiceElement.querySelector('.actions-div');
+
+                const textSpan = document.createElement('span');
+                textSpan.textContent = choices[index];
+                textSpan.className = 'choice-text flex-grow cursor-pointer'; // Added flex-grow and cursor-pointer
+                
+                // --- Add click listener to the text to enable editing ---
+                textSpan.onclick = () => editChoice(index);
+                // --- End of new part ---
+
+                choiceElement.replaceChild(textSpan, editInput);
+
+                actionsDiv.querySelector('.edit-btn').classList.remove('hidden');
+                actionsDiv.querySelector('.delete-btn').classList.remove('hidden');
+                actionsDiv.querySelector('.save-btn').classList.add('hidden');
+                actionsDiv.querySelector('.cancel-btn').classList.add('hidden');
+            }
+
+
+            /**
+             * Re-renders the list of choices on the screen.
+             */
+            function renderChoices() {
+                choicesList.innerHTML = ''; // Clear existing list
+                
+                // If an item is being edited, render() will wipe it out.
+                // So, we must ensure editing is cancelled before re-rendering.
+                // The only functions calling renderChoices() are addChoice() and deleteChoice(),
+                // which already cancel edits. So we are safe.
+                
+                choices.forEach((choice, index) => {
+                    const choiceElement = document.createElement('div');
+                    choiceElement.classList.add('choice-item', 'bg-gray-100', 'rounded-lg', 'p-3', 'text-gray-800', 'font-medium', 'transition-all', 'duration-100', 'border-2', 'border-transparent', 'flex', 'items-center', 'justify-between');
+                    
+                    const textSpan = document.createElement('span');
+                    textSpan.textContent = choice;
+                    textSpan.className = 'choice-text flex-grow cursor-pointer'; // Added flex-grow and cursor-pointer
+                    
+                    // --- Add click listener to the text to enable editing ---
+                    textSpan.onclick = () => editChoice(index);
+                    // --- End of new part ---
+                    
+                    choiceElement.appendChild(textSpan);
+
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.classList.add('actions-div', 'flex', 'gap-2', 'flex-shrink-0', 'ml-2');
+
+                    // Edit Button
+                    const editButton = document.createElement('button');
+                    editButton.innerHTML = '<i class="fas fa-edit"></i>'; // Edit Icon
+                    editButton.className = 'edit-btn text-blue-600 hover:text-blue-800 p-1 rounded-md transition-colors';
+                    editButton.onclick = () => editChoice(index);
+actionsDiv.appendChild(editButton);
+
+                    // Delete Button
+                    const deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>'; // Delete Icon
+                    deleteButton.className = 'delete-btn text-red-600 hover:text-red-800 p-1 rounded-md transition-colors';
+                    deleteButton.onclick = () => deleteChoice(index);
+                    actionsDiv.appendChild(deleteButton);
+                    
+                    // Save Button (Hidden)
+                    const saveButton = document.createElement('button');
+                    saveButton.innerHTML = '<i class="fas fa-save"></i>'; // Save Icon
+                    saveButton.className = 'save-btn text-green-600 hover:text-green-800 p-1 rounded-md transition-colors hidden';
+                    // Use onmousedown to prevent blur event from firing first
+                    saveButton.onmousedown = (e) => { e.preventDefault(); saveChoice(index); };
+                    actionsDiv.appendChild(saveButton);
+
+                    // Cancel Button (Hidden)
+                    const cancelButton = document.createElement('button');
+                    cancelButton.innerHTML = '<i class="fas fa-times-circle"></i>'; // Cancel Icon
+                    cancelButton.className = 'cancel-btn text-gray-500 hover:text-gray-700 p-1 rounded-md transition-colors hidden';
+                    // Use onmousedown to prevent blur event from firing first
+                    cancelButton.onmousedown = (e) => { e.preventDefault(); cancelEdit(index); };
+                    actionsDiv.appendChild(cancelButton);
+
+                    choiceElement.appendChild(actionsDiv);
+                    choicesList.appendChild(choiceElement);
+                });
+            }
+
+            /**
+             * Enables or disables the "Ask" button based on the number of choices.
+             */
+            function updateAskButtonState() {
+                if (choices.length < 2) {
+                    askBtn.disabled = true;
+                } else {
+                    askBtn.disabled = false;
+                }
+            }
+
+            /**
+             * Starts the decision-making animation.
+             */
+            function startDecision() {
+                // Disable controls
+                askBtn.disabled = true;
+                addChoiceBtn.disabled = true;
+                choiceInput.disabled = true;
+                
+                // Cancel any active edit before starting
+                if (editingIndex !== -1) {
+                    cancelEdit(editingIndex);
+                }
+
+                document.querySelectorAll('.choice-item button').forEach(btn => btn.disabled = true); // Disable edit/delete buttons
+
+                const timesToPick = 30; // Total number of "flashes"
+                const intervalTime = 100; // Time between flashes (in ms)
+                let pickCount = 0;
+
+                const interval = setInterval(() => {
+                    pickCount++;
+                    const randomChoiceIndex = pickRandomChoiceIndex();
+                    highlightChoice(randomChoiceIndex);
+
+                    if (pickCount >= timesToPick) {
+                        clearInterval(interval);
+                        // Settle on a final choice
+                        const finalChoiceIndex = pickRandomChoiceIndex();
+                        const finalChoice = choices[finalChoiceIndex];
+                        
+                        // Wait a moment on the final highlight before showing result
+                        setTimeout(() => {
+                            showResult(finalChoice);
+                        }, 500);
+                    }
+                }, intervalTime);
+            }
+
+            /**
+             * Returns a random index from the choices array.
+             */
+            function pickRandomChoiceIndex() {
+                return Math.floor(Math.random() * choices.length);
+            }
+
+            /**
+             * Highlights a specific choice element by its index.
+             */
+            function highlightChoice(index) {
+                const items = document.querySelectorAll('#choices-list .choice-item');
+                // Remove highlight from all items
+                items.forEach(item => item.classList.remove('highlight'));
+                
+                // Add highlight to the randomly selected item
+                if (items[index]) {
+                    items[index].classList.add('highlight');
+                }
+            }
+
+            /**
+             * Displays the final chosen result.
+             */
+            function showResult(finalChoice) {
+                // Hide input and choice sections
+                inputSection.classList.add('hidden');
+                choicesContainer.classList.add('hidden');
+                askBtn.classList.add('hidden');
+                initialImageContainer.classList.add('hidden'); // Hide initial image
+
+                // Show result
+                resultText.textContent = finalChoice;
+                resultSection.classList.remove('hidden');
+            }
+
+            /**
+             * Hides the result and allows asking again with the same choices.
+             */
+            function askAgain() {
+                // Hide result section
+                resultSection.classList.add('hidden');
+                resultText.textContent = '';
+
+                // Show input and choice sections
+                inputSection.classList.remove('hidden');
+                choicesContainer.classList.remove('hidden');
+                askBtn.classList.remove('hidden');
+                initialImageContainer.classList.remove('hidden');
+
+                // Re-enable controls
+                askBtn.disabled = false;
+                addChoiceBtn.disabled = false;
+                choiceInput.disabled = false;
+                document.querySelectorAll('.choice-item button').forEach(btn => btn.disabled = false);
+            }
+
+            /**
+             * Resets the app to its initial state.
+             */
+            function startOver() {
+                choices = ["Choice 1", "Choice 2"]; // Reset to default choices
+                editingIndex = -1; // Reset editing state
+                addChoiceBtn.textContent = 'Add';
+                addChoiceBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                addChoiceBtn.classList.add('bg-orange-600', 'hover:bg-orange-700');
+                choiceInput.value = '';
+
+                renderChoices();
+                updateAskButtonState();
+
+                // Hide result section
+                resultSection.classList.add('hidden');
+                resultText.textContent = '';
+
+                // Show input and choice sections
+                inputSection.classList.remove('hidden');
+                choicesContainer.classList.remove('hidden');
+                askBtn.classList.remove('hidden');
+                initialImageContainer.classList.remove('hidden'); // Show initial image
+
+                // Re-enable controls
+                addChoiceBtn.disabled = false;
+                choiceInput.disabled = false;
+            }
+
+// --- Event Listeners ---
+            addChoiceBtn.addEventListener('click', addChoice);
+            choiceInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    addChoice();
+                }
+            });
+            askBtn.addEventListener('click', startDecision);
+            askAgainBtn.addEventListener('click', askAgain);
+            startOverBtn.addEventListener('click', startOver);
+
+            // --- Initial State Setup ---
+            renderChoices(); // Render the pre-filled choices
+            updateAskButtonState();
+        });
+    </script>
+</body>
+</html>
